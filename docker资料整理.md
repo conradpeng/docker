@@ -7,8 +7,32 @@
   - [Docker 镜像](#docker-镜像)
 - [Docker 命令](#docker-命令)
   - [帮助命令](#帮助命令)
+    - [docker info](#docker-info)
+    - [docker version](#docker-version)
+    - [docker --help](#docker---help)
   - [镜像命令](#镜像命令)
+    - [查看本地镜像列表 `docker images`](#查看本地镜像列表-docker-images)
+    - [搜索DockerHub上的镜像 `docker search`](#搜索dockerhub上的镜像-docker-search)
+    - [拉取DockerHub上的镜像 `docker pull`](#拉取dockerhub上的镜像-docker-pull)
+    - [删除本地镜像 `docker rmi`](#删除本地镜像-docker-rmi)
+    - [提交容器副本使其成为新的镜像 `docker commit`](#提交容器副本使其成为新的镜像-docker-commit)
+    - [镜像提交到云端](#镜像提交到云端)
   - [容器命令](#容器命令)
+    - [新建并启动容器 `docker run`](#新建并启动容器-docker-run)
+    - [列出容器列表 `docker ps`](#列出容器列表-docker-ps)
+    - [退出容器 `ctrl+P+Q`](#退出容器-ctrlpq)
+    - [启动容器 `docker start`](#启动容器-docker-start)
+    - [重启容器 `docker restart`](#重启容器-docker-restart)
+    - [停止容器 `docker stop`](#停止容器-docker-stop)
+    - [强制停止 `docker kill`](#强制停止-docker-kill)
+    - [查看容器内部进程 `docker top`](#查看容器内部进程-docker-top)
+    - [查看容器内部细节 `docker inspect`](#查看容器内部细节-docker-inspect)
+    - [删除容器 `dcoker rm`](#删除容器-dcoker-rm)
+    - [查看容器日志 `docker logs`](#查看容器日志-docker-logs)
+    - [重新以交互式进入容器 `docker attach/exec`](#重新以交互式进入容器-docker-attachexec)
+    - [在宿主机中对容器内部进行操作 `docker exec`](#在宿主机中对容器内部进行操作-docker-exec)
+    - [容器内数据拷贝至主机 `docker cp`](#容器内数据拷贝至主机-docker-cp)
+    - [更新容器配置 `docker update`](#更新容器配置-docker-update)
 - [Docker 容器数据卷](#docker-容器数据卷)
   - [作用](#作用)
   - [添加数据卷](#添加数据卷)
@@ -23,8 +47,24 @@
     - [验证 `ONBUILD` 的作用](#验证-onbuild-的作用)
     - [自定义 `tomcat9`](#自定义-tomcat9)
 - [DockerCompose](#dockercompose)
-- [Docker 网络模式](#docker-网络模式)
-  - [主机模式 hostonly](#主机模式-hostonly)
+- [Docker 网络](#docker-网络)
+  - [Docker 网络模式](#docker-网络模式)
+    - [桥接模式 `bridge`](#桥接模式-bridge)
+    - [主机模式 `hostonly`](#主机模式-hostonly)
+    - [容器模式 `container`](#容器模式-container)
+    - [无网络模式 `none`](#无网络模式-none)
+  - [常用指令](#常用指令)
+    - [帮助命令 `docker network --help`](#帮助命令-docker-network---help)
+    - [列出网络 `docker network ls`](#列出网络-docker-network-ls)
+    - [查看网络详细信息 `docker network inspect 网络ID/网络名`](#查看网络详细信息-docker-network-inspect-网络id网络名)
+    - [移除网络 `docker network rm 网络ID/网络名`](#移除网络-docker-network-rm-网络id网络名)
+    - [创建网络 `docker network create`](#创建网络-docker-network-create)
+    - [连接容器到一个网络 `docker network connect`](#连接容器到一个网络-docker-network-connect)
+  - [自定义网络](#自定义网络)
+    - [容器互联](#容器互联)
+    - [网络连通](#网络连通)
+  - [实例](#实例-1)
+    - [`redis` 集群](#redis-集群)
 - [一些错误解决](#一些错误解决)
   - [容器内部无法访问网关](#容器内部无法访问网关)
 
@@ -66,7 +106,8 @@
     >`local host`: 本地主机<br>
     >`remote host`： 远程主机<br>
     >`Registries`: 注册仓库<br>
-    >`Docker hub`: 公开库<br>private registry`: 私有仓库
+    >`Docker hub`: 公开库<br>
+    >`private registry`: 私有仓库
 
     `Docker`本身是一个容器运行的载体，可以被称作管理引擎，即`client`<br>
 
@@ -331,373 +372,373 @@
 
 ## 帮助命令
 
-- ### docker info
+### docker info
 
-- ### docker version
+### docker version
 
-- ### docker --help
+### docker --help
 
 ## 镜像命令
 
-- ### 查看本地镜像列表 `docker images`
+### 查看本地镜像列表 `docker images`
 
-    - 语法
-        ```
-        docker images [options][image]
-        ```
-        > `REPOSITORY` : 镜像的仓库源<br>
-        `TAG` : 镜像的标签<br>
-        `IMAGE ID` : 镜像的id<br>
-        `CREATED` : 镜像的创建时间<br>
-        `SIZE` : 镜像的大小
+  - 语法
+      ```
+      docker images [options][image]
+      ```
+      > `REPOSITORY` : 镜像的仓库源<br>
+      `TAG` : 镜像的标签<br>
+      `IMAGE ID` : 镜像的id<br>
+      `CREATED` : 镜像的创建时间<br>
+      `SIZE` : 镜像的大小
 
-        使用 `REPOSITORY:TAG` 来定义不同的镜像
+      使用 `REPOSITORY:TAG` 来定义不同的镜像
 
-    - 参数<br>
-        > `-a` : `all` 列出本地含中间镜像层<br>
-        > `-q` : `quiet` 只显示镜像ID，常用于批量操作命令<br>
-        > `--no-trunc` : 显示镜像的完整信息 ( 完全长度的 `IMAGE ID` )<br>
-        > `-digests` : 显示镜像的摘要信息
+  - 参数<br>
+      > `-a` : `all` 列出本地含中间镜像层<br>
+      > `-q` : `quiet` 只显示镜像ID，常用于批量操作命令<br>
+      > `--no-trunc` : 显示镜像的完整信息 ( 完全长度的 `IMAGE ID` )<br>
+      > `-digests` : 显示镜像的摘要信息
 
-- ### 搜索DockerHub上的镜像 `docker search`
+### 搜索DockerHub上的镜像 `docker search`
 
-    - 语法
-        ```
-        docker search [options] 
-        ```
-    - 参数
-        > `--no-trunc` 显示镜像完整的描述信息
-        ``` docker
-        docker search --no-trunc apache
-        ```
+  - 语法
+      ```
+      docker search [options] 
+      ```
+  - 参数
+      > `--no-trunc` 显示镜像完整的描述信息
+      ``` docker
+      docker search --no-trunc apache
+      ```
 
-        > `-s` : `star` 过滤出点赞数超过某个数字的镜像列表
-        ``` docker
-        docker search -s 30 apache
-        ```
+      > `-s` : `star` 过滤出点赞数超过某个数字的镜像列表
+      ``` docker
+      docker search -s 30 apache
+      ```
 
-        > `--automated` : 罗列出 `automated build` 类型的镜像
-        ``` docker
-        docker search --automated apache
-        ```
-
-- ### 拉取DockerHub上的镜像 `docker pull`
-
-    - 语法<br>
-        ```
-        docker pull 镜像名[:TAG]
-        ```
-        如果没有后跟版本号，则默认拉取最新的版本
-        ``` docker
-        # 下面两句命令等价
-        docker pull tomcat
-        docker pull tomcat:latest
-        ```
-- ### 删除本地镜像 `docker rmi`
-
-    - 语法<br>
-        ```
-        docker rmi 镜像名[:TAG] 
-        ```
-        `rmi` 即 `remove images`<br>
-        如果没有后跟版本号，则默认拉取最新的版本
-        ``` docker
-        # 以下两句命令等价
-        docker rmi hello-world
-        docker rmi hello-world:latest
-        ```
-        如果有容器正在使用，则需要先删除容器再删除镜像
-        ``` docker
-        # 查看容器列表
-        docker ps -a
-        # 删除对应的容器
-        docker rm 2ab123b75484
-        # 删除镜像
-        docker rmi hello-world
-        # 或者强制删除
-        docker rmi -f hello-world
+      > `--automated` : 罗列出 `automated build` 类型的镜像
+      ``` docker
+      docker search --automated apache
         ```
 
-    - 参数<br>
-      
-        >`-f` : `force` 强制删除<br>
+### 拉取DockerHub上的镜像 `docker pull`
+
+  - 语法<br>
+      ```
+      docker pull 镜像名[:TAG]
+      ```
+      如果没有后跟版本号，则默认拉取最新的版本
+      ``` docker
+      # 下面两句命令等价
+      docker pull tomcat
+      docker pull tomcat:latest
+      ```
+### 删除本地镜像 `docker rmi`
+
+  - 语法<br>
+      ```
+      docker rmi 镜像名[:TAG] 
+      ```
+      `rmi` 即 `remove images`<br>
+      如果没有后跟版本号，则默认拉取最新的版本
+      ``` docker
+      # 以下两句命令等价
+      docker rmi hello-world
+      docker rmi hello-world:latest
+      ```
+      如果有容器正在使用，则需要先删除容器再删除镜像
+      ``` docker
+      # 查看容器列表
+      docker ps -a
+      # 删除对应的容器
+      docker rm 2ab123b75484
+      # 删除镜像
+      docker rmi hello-world
+      # 或者强制删除
+      docker rmi -f hello-world
+      ```
+
+  - 参数<br>
     
-    - 其他用法<br>
-        > 同时删除多条
-        ``` docker
-        docker rmi 镜像1[:TAG] 镜像2[:TAG]
-        docker rmi -f hello-world nginx
-        ```
-        > 检索条件删除
-        ``` docker
-        docker rmi $(条件)
-        # 例:删除本地全部镜像
-        docker rmi -f $(docker image -qa)
-        ```
+      >`-f` : `force` 强制删除<br>
+  
+  - 其他用法<br>
+      > 同时删除多条
+      ``` docker
+      docker rmi 镜像1[:TAG] 镜像2[:TAG]
+      docker rmi -f hello-world nginx
+      ```
+      > 检索条件删除
+      ``` docker
+      docker rmi $(条件)
+      # 例:删除本地全部镜像
+      docker rmi -f $(docker image -qa)
+      ```
 
-- ### 提交容器副本使其成为新的镜像 `docker commit`
-    - 语法
-        ```
-        docker commit -m="提交的描述信息" -a="作者" 容器ID 要创建的目标镜像[:标签名]
-        ```
-        ``` docker
-        # 生成的镜像名可以使用命名空间
-        docker commit -m="默认页面" -a="jack" 3ae70c8727f6 jack/tomcat:0.1
-        ```
+### 提交容器副本使其成为新的镜像 `docker commit`
+  - 语法
+      ```
+      docker commit -m="提交的描述信息" -a="作者" 容器ID 要创建的目标镜像[:标签名]
+      ```
+      ``` docker
+      # 生成的镜像名可以使用命名空间
+      docker commit -m="默认页面" -a="jack" 3ae70c8727f6 jack/tomcat:0.1
+      ```
 
-    - 参数
-        > `-m="描述信息"`<br>
-        > `-a="作者"`
+  - 参数
+      > `-m="描述信息"`<br>
+      > `-a="作者"`
 
-- ### 镜像提交到云端
-    - 容器生成新的本地镜像
-        ``` docker
-        docker commit -a="conrad" -m="centos with tomcat and java" 5514e763e80c conrad/mycentos:1.0
-        ```
-    - 阿里云镜像仓库<br>
-        直接登录阿里云创建镜像仓库<br>
-        创建完成选择管理会有详细的操作步骤
+### 镜像提交到云端
+  - 容器生成新的本地镜像
+      ``` docker
+      docker commit -a="conrad" -m="centos with tomcat and java" 5514e763e80c conrad/mycentos:1.0
+      ```
+  - 阿里云镜像仓库<br>
+      直接登录阿里云创建镜像仓库<br>
+      创建完成选择管理会有详细的操作步骤
 
-        ``` docker
-        # 登录阿里云
-        docker login --username=用户名 registry.cn-hangzhou.aliyuncs.com
+      ``` docker
+      # 登录阿里云
+      docker login --username=用户名 registry.cn-hangzhou.aliyuncs.com
 
-        # 从仓库拉取镜像
-        docker pull registry.cn-hangzhou.aliyuncs.com/xxxx/mycentos:[镜像版本号]
+      # 从仓库拉取镜像
+      docker pull registry.cn-hangzhou.aliyuncs.com/xxxx/mycentos:[镜像版本号]
 
-        # 标记本地镜像，将其归入云端仓库
-        docker tag [ImageId] registry.cn-hangzhou.aliyuncs.com/xxxx/mycentos:[镜像版本号]
+      # 标记本地镜像，将其归入云端仓库
+      docker tag [ImageId] registry.cn-hangzhou.aliyuncs.com/xxxx/mycentos:[镜像版本号]
 
-        # 推送镜像至仓库
-        docker push registry.cn-hangzhou.aliyuncs.com/xxxx/mycentos:[镜像版本号]
-        ```
+      # 推送镜像至仓库
+      docker push registry.cn-hangzhou.aliyuncs.com/xxxx/mycentos:[镜像版本号]
+      ```
 
 ## 容器命令
 
-- ### 新建并启动容器 `docker run`
+### 新建并启动容器 `docker run`
 
-    - 语法
-        ```
-        docker run [options] image [command][arg]
-        ```
-    - 参数
-        > `--name="容器新名字"` : 为容器指定一个名字，不加该参数时会默认给容器一个名字<br>
-        ``` docker
-        docker run -it --name="mycentos" centos
-        ```
-        >`-d` : 后台运行容器，并返回容器 `ID`，守护式启动<br>
-        ```
-        [root@localhost ~]# docker run -d centos
-        78afff9f3061518d5896a9de70ff30310a905511deeb65025fd1b9a7cd1fb6f7
-        [root@localhost ~]# docker ps -a
-        CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                          PORTS               NAMES
-        78afff9f3061        centos              "/bin/bash"         8 seconds ago       Exited (0) 7 seconds ago                            angry_gould
-        ```
-        > `-i` : 交互模式运行<br>
-        会提供一个命令行与容器交互
-        ```
-        [root@localhost ~]# docker run -i centos
-        ps -ef
-        UID        PID  PPID  C STIME TTY          TIME CMD
-        root         1     0  0 03:08 ?        00:00:00 /bin/bash
-        root         6     1  0 03:08 ?        00:00:00 ps -ef
-        ```
-        >`-t` : 为容器分配一个伪输入终端<br>
-        但是不具备交互功能
-        ```
-        [root@localhost ~]# docker run -t centos
-        [root@a3325920717e /]# ps -ef
-        ^C^C
-        ```
-        > `-it` : `it` 参数常结合在一起使用，启动交互式容器<br>
-        ```
-        [root@localhost ~]# docker run -it centos
-        [root@a3874b2d0c59 /]# ps -ef
-        UID        PID  PPID  C STIME TTY          TIME CMD
-        root         1     0  0 03:14 pts/0    00:00:00 /bin/bash
-        root        14     1  0 03:14 pts/0    00:00:00 ps -ef
-        ```
-        > `-P` : 随机端口映射<br>
-        >`-p` : 指定端口映射，主机端口:容器端口<br>
-        ```
-        docker run -it -p 8888:8080 tomcat
-        ```
-        > `-v` : 添加容器卷<br>
+  - 语法
+      ```
+      docker run [options] image [command][arg]
+      ```
+  - 参数
+      > `--name="容器新名字"` : 为容器指定一个名字，不加该参数时会默认给容器一个名字<br>
+      ``` docker
+      docker run -it --name="mycentos" centos
+      ```
+      >`-d` : 后台运行容器，并返回容器 `ID`，守护式启动<br>
+      ```
+      [root@localhost ~]# docker run -d centos
+      78afff9f3061518d5896a9de70ff30310a905511deeb65025fd1b9a7cd1fb6f7
+      [root@localhost ~]# docker ps -a
+      CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                          PORTS               NAMES
+      78afff9f3061        centos              "/bin/bash"         8 seconds ago       Exited (0) 7 seconds ago                            angry_gould
+      ```
+      > `-i` : 交互模式运行<br>
+      会提供一个命令行与容器交互
+      ```
+      [root@localhost ~]# docker run -i centos
+      ps -ef
+      UID        PID  PPID  C STIME TTY          TIME CMD
+      root         1     0  0 03:08 ?        00:00:00 /bin/bash
+      root         6     1  0 03:08 ?        00:00:00 ps -ef
+      ```
+      >`-t` : 为容器分配一个伪输入终端<br>
+      但是不具备交互功能
+      ```
+      [root@localhost ~]# docker run -t centos
+      [root@a3325920717e /]# ps -ef
+      ^C^C
+      ```
+      > `-it` : `it` 参数常结合在一起使用，启动交互式容器<br>
+      ```
+      [root@localhost ~]# docker run -it centos
+      [root@a3874b2d0c59 /]# ps -ef
+      UID        PID  PPID  C STIME TTY          TIME CMD
+      root         1     0  0 03:14 pts/0    00:00:00 /bin/bash
+      root        14     1  0 03:14 pts/0    00:00:00 ps -ef
+      ```
+      > `-P` : 随机端口映射<br>
+      >`-p` : 指定端口映射，主机端口:容器端口<br>
+      ```
+      docker run -it -p 8888:8080 tomcat
+      ```
+      > `-v` : 添加容器卷<br>
+      > `--net` : 选择网络( 默认bridge，可选host，none，container 或者自定义网络 )<br>
+      > `command` : 指交互的命令模式
+      ``` docker
+      # 不携带的情况下默认指 /bin/bash
+      docker run -it centos /bin/bash
+      ```
 
-        > `command` : 指交互的命令模式
-        ``` docker
-        # 不携带的情况下默认指 /bin/bash
-        docker run -it centos /bin/bash
-        ```
+### 列出容器列表 `docker ps`
+  - 语法<br>
+      ```
+      docker ps [options] 
+      ```
+      不携带参数默认会只显示出正在运行的容器
+      ``` docker
+      docker ps
+      ```
+      > `CONTAINER ID` : 容器 `ID`<br>
+      > `IMAGE` : 镜像名<br>
+      > `COMMAND` : 命令模式<br>
+      > `CREATED` : 创建时间<br>
+      > `STATUS` : 状态 `up` 运行中 `Exited`停止中<br>
+      > `PORTS` : 端口<br>
+      > `NAMES` : 容器名<br>
 
-- ### 列出容器列表 `docker ps`
-    - 语法<br>
-        ```
-        docker ps [options] 
-        ```
-        不携带参数默认会只显示出正在运行的容器
-        ``` docker
-        docker ps
-        ```
-        > `CONTAINER ID` : 容器 `ID`<br>
-        > `IMAGE` : 镜像名<br>
-        > `COMMAND` : 命令模式<br>
-        > `CREATED` : 创建时间<br>
-        > `STATUS` : 状态 `up` 运行中 `Exited`停止中<br>
-        > `PORTS` : 端口<br>
-        > `NAMES` : 容器名<br>
+  - 参数
+      > `-l` : `last` 查看上一个容器<br>
+      > `-n` : `number` 查看上 `n` 个容器列表<br>
+      ``` docker
+      # 取得最近运行的5个容器的列表
+      docker ps -n 5
+      ```
+      > `-a` : `all` 查看所有的容器列表<br>
+      > `-q` : `quiet` 查看容器 `ID`，常用于批量操作<br>
+      > `--no-trunc` : 显示镜像的完整信息
 
-    - 参数
-        > `-l` : `last` 查看上一个容器<br>
-        > `-n` : `number` 查看上 `n` 个容器列表<br>
-        ``` docker
-        # 取得最近运行的5个容器的列表
-        docker ps -n 5
-        ```
-        > `-a` : `all` 查看所有的容器列表<br>
-        > `-q` : `quiet` 查看容器 `ID`，常用于批量操作<br>
-        > `--no-trunc` : 显示镜像的完整信息
+### 退出容器 `ctrl+P+Q`
+  - `exit` 容器停止退出
+  - `ctrl+P+Q` 容器不停止退出
 
-- ### 退出容器 `ctrl+P+Q`
-    - `exit` 容器停止退出
-    - `ctrl+P+Q` 容器不停止退出
+### 启动容器 `docker start`
+  - 语法
+      ```
+      docker start 容器ID
+      ```
+  - 不携带参数的情况下，`start` 命令会是后台运行容器
+  - 参数
+    
+      > `-i` : 启动交互式容器
+### 重启容器 `docker restart`
+### 停止容器 `docker stop`
+### 强制停止 `docker kill`
+### 查看容器内部进程 `docker top`
+### 查看容器内部细节 `docker inspect`
+  - 返回一个 `json` 串，包含容器的各种详细配置信息
+### 删除容器 `dcoker rm`
+  - 语法
+      ```
+      dcoker rm 容器ID1 [容器ID2]
+      ```
+  - 参数
 
-- ### 启动容器 `docker start`
-    - 语法
-        ```
-        docker start 容器ID
-        ```
-    - 不携带参数的情况下，`start` 命令会是后台运行容器
-    - 参数
-      
-        > `-i` : 启动交互式容器
-- ### 重启容器 `docker restart`
-- ### 停止容器 `docker stop`
-- ### 强制停止 `docker kill`
-- ### 查看容器内部进程 `docker top`
-- ### 查看容器内部细节 `docker inspect`
-    - 返回一个 `json` 串，包含容器的各种详细配置信息
-- ### 删除容器 `dcoker rm`
-    - 语法
-        ```
-        dcoker rm 容器ID1 [容器ID2]
-        ```
-    - 参数
+      > `-f` : `force` 强制删除
 
-        > `-f` : `force` 强制删除
+  - 其他用法
 
-    - 其他用法
+      ``` docker
+      # 删除所有容器
+      docker rm -f $(docker ps -qa)
+      docker ps -qa | xargs docker rm -f
+      ```
+### 查看容器日志 `docker logs`
 
-        ``` docker
-        # 删除所有容器
-        docker rm -f $(docker ps -qa)
-        docker ps -qa | xargs docker rm -f
-        ```
-- ### 查看容器日志 `docker logs`
+  - 语法
+      ```
+      docker logs -f -t --tail 容器ID
+      ```
+  - 参数
+      > `-f` : `forward` 持续刷新输出<br>
+     ```
+      [root@6c57b298d26a ~]# while true; do echo 111; sleep 3; done;
 
-    - 语法
-        ```
-        docker logs -f -t --tail 容器ID
-        ```
-    - 参数
-        > `-f` : `forward` 持续刷新输出<br>
-       ```
-        [root@6c57b298d26a ~]# while true; do echo 111; sleep 3; done;
-
-        [root@localhost ~]# docker logs -f 6c57b298d26a
-        [root@6c57b298d26a ~]# while true; do echo 111; sleep 3; done;
-        111
-        111
-        111
-        111
-        111
-        111
-        111
-        ...
-        ...
-       ```
-        > `-t` : `time` 输出时间信息<br>
-        ```
-        [root@localhost ~]# docker logs -t 6c57b298d26a
-        2020-11-04T01:41:25.709110632Z [root@6c57b298d26a ~]# while true; do echo 111; sleep 3; done;
-        2020-11-04T01:41:25.709125414Z 111
-        2020-11-04T01:41:28.709979528Z 111
-        2020-11-04T01:41:31.711747607Z 111
-        2020-11-04T01:41:34.713918928Z 111
-        2020-11-04T01:41:37.714750331Z 111
-        ```
-        > `--tail` : 输出末尾的几行
-        ```
-        [root@localhost ~]# docker logs -tf --tail 5 6c57b298d26a
-        2020-11-04T01:45:34.828906039Z 111
-        2020-11-04T01:45:37.830723510Z 111
-        2020-11-04T01:45:40.832663279Z 111
-        2020-11-04T01:45:43.834852182Z 111
-        2020-11-04T01:45:46.835911935Z 111
-        ```
-        > 结合使用，能够持续输出带有时间信息的log
+      [root@localhost ~]# docker logs -f 6c57b298d26a
+      [root@6c57b298d26a ~]# while true; do echo 111; sleep 3; done;
+      111
+      111
+      111
+      111
+      111
+      111
+      111
+      ...
+      ...
+     ```
+      > `-t` : `time` 输出时间信息<br>
+      ```
+      [root@localhost ~]# docker logs -t 6c57b298d26a
+      2020-11-04T01:41:25.709110632Z [root@6c57b298d26a ~]# while true; do echo 111; sleep 3; done;
+      2020-11-04T01:41:25.709125414Z 111
+      2020-11-04T01:41:28.709979528Z 111
+      2020-11-04T01:41:31.711747607Z 111
+      2020-11-04T01:41:34.713918928Z 111
+      2020-11-04T01:41:37.714750331Z 111
+      ```
+      > `--tail` : 输出末尾的几行
+      ```
+      [root@localhost ~]# docker logs -tf --tail 5 6c57b298d26a
+      2020-11-04T01:45:34.828906039Z 111
+      2020-11-04T01:45:37.830723510Z 111
+      2020-11-04T01:45:40.832663279Z 111
+      2020-11-04T01:45:43.834852182Z 111
+      2020-11-04T01:45:46.835911935Z 111
+      ```
+      > 结合使用，能够持续输出带有时间信息的log
 
 
 
-- ### 重新以交互式进入容器 `docker attach/exec`
-    - 语法<br>
-        `attach`
-        ```
-        docker attach 6c57b298d26a
-        ```
-        `exec`
-        ```
-        docker exec -it 6c57b298d26a /bin/bash
-        ```
+### 重新以交互式进入容器 `docker attach/exec`
+  - 语法<br>
+      `attach`
+      ```
+      docker attach 6c57b298d26a
+      ```
+      `exec`
+      ```
+      docker exec -it 6c57b298d26a /bin/bash
+      ```
 
-- ### 在宿主机中对容器内部进行操作 `docker exec`
-    - 语法
-        ```
-        docker exec [options] 容器ID
-        ```
-    - 参数
-        > `d` : 后台运行<br>
-        > `i` : 交互模式<br>
-        > `t` : 伪终端
+### 在宿主机中对容器内部进行操作 `docker exec`
+  - 语法
+      ```
+      docker exec [options] 容器ID
+      ```
+  - 参数
+      > `d` : 后台运行<br>
+      > `i` : 交互模式<br>
+      > `t` : 伪终端
 
-        ``` docker
-        # 可以在宿主机中操作容器内部
-        $ docker exec -d 6c57b298d26a ls /tmp
-        $ docker exec -i 6c57b298d26a ls /tmp
-        ks-script-2n9owwnh
-        ks-script-xm1o5azb
-        $ docker exec -t 6c57b298d26a ls /tmp
-        ks-script-2n9owwnh  ks-script-xm1o5azb
-        ```
-        ``` docker
-        # 例：可以以交互模式执行容器内的脚本
-        docker exec -it mynginx /bin/sh /root/runoob.sh
-        ```
+      ``` docker
+      # 可以在宿主机中操作容器内部
+      $ docker exec -d 6c57b298d26a ls /tmp
+      $ docker exec -i 6c57b298d26a ls /tmp
+      ks-script-2n9owwnh
+      ks-script-xm1o5azb
+      $ docker exec -t 6c57b298d26a ls /tmp
+      ks-script-2n9owwnh  ks-script-xm1o5azb
+      ```
+      ``` docker
+      # 例：可以以交互模式执行容器内的脚本
+      docker exec -it mynginx /bin/sh /root/runoob.sh
+      ```
 
-- ### 容器内数据拷贝至主机 `docker cp`
-    - 语法
-        ```
-        docker cp 容器ID:容器文件路径 主机目标路径
-        ```
-        使用 `cp` 命令拷贝出来的文件，文件信息与原文件完全一致
-        ```
-        docker cp 6c57b298d26a:/tmp/aa.log /tmp/aa2.log
-        ```
+### 容器内数据拷贝至主机 `docker cp`
+  - 语法
+      ```
+      docker cp 容器ID:容器文件路径 主机目标路径
+      ```
+      使用 `cp` 命令拷贝出来的文件，文件信息与原文件完全一致
+      ```
+      docker cp 6c57b298d26a:/tmp/aa.log /tmp/aa2.log
+      ```
 
-- ### 更新容器配置 `docker update`
-    - 语法
-        ```
-        docker update [options] 容器ID [容器ID...]
-        ```
-    - 参数
-        > `--restart` : 当容器退出时重新启动的策略<br>
-        `--memory-swap` : 交换空间，“-1”允许无限交换<br>
-        `--memory , -m` : 内存限制
+### 更新容器配置 `docker update`
+  - 语法
+      ```
+      docker update [options] 容器ID [容器ID...]
+      ```
+  - 参数
+      > `--restart` : 当容器退出时重新启动的策略<br>
+      `--memory-swap` : 交换空间，“-1”允许无限交换<br>
+      `--memory , -m` : 内存限制
 
-        配置容器自启、重启策略
-        ```
-        docker update --restart=always 6c57b298d26a
-        ```
+      配置容器自启、重启策略
+      ```
+      docker update --restart=always 6c57b298d26a
+      ```
 
 # Docker 容器数据卷
 
@@ -1080,12 +1121,314 @@
 
 # DockerCompose
 
-# Docker 网络模式
+# Docker 网络
 
-## 主机模式 hostonly
-```
-docker run -d --net=host tomcat 
-```
+## Docker 网络模式
+[参考资料](https://www.jianshu.com/p/22a7032bb7bd)
+
+### 桥接模式 `bridge` 
+
+- `Docker0`
+
+    >当 `docker` 进程启动时便会在主机创建一个名为 `docker0` 的虚拟网桥，此主机上运行的 `docker` 容器会连接到这个虚拟网桥上<br>
+    其工作原理类似于物理交换机，将容器连在了这样一个二层网络中
+
+    主机中查看网络状况
+    ``` sh
+    [root@localhost ~]# ip addr
+    ...
+    ...
+    # docker的虚拟网桥
+    6: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
+        link/ether 02:42:19:81:39:81 brd ff:ff:ff:ff:ff:ff
+        inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+        valid_lft forever preferred_lft forever
+        inet6 fe80::42:19ff:fe81:3981/64 scope link
+        valid_lft forever preferred_lft forever
+
+    ...
+    ...
+    ```
+
+- `veth pair`
+
+    >在运行容器时，主机上会创建一对虚拟网卡 `veth pair`<br>
+    一端放在新创建的容器中，命名为 `eth0`<br>
+    一端放在主机中，命名类似于 `vethexxxxx`<br>
+    这个设备会被添加到 `docker0` 网桥中
+
+    主机中查看网络
+    ``` sh
+    [root@localhost ~]# ip addr
+    ...
+    ...
+    # docker给运行的容器分配的地址
+    56: vethe1976f1@if55: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master docker0 state UP
+        link/ether 52:ea:14:90:b4:90 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+        inet6 fe80::50ea:14ff:fe90:b490/64 scope link
+        valid_lft forever preferred_lft forever
+    ```
+
+
+    进入容器查看容器的网络状况
+    ``` sh
+    [root@5514e763e80c local]# ip addr
+    ...
+    ...
+    55: eth0@if56: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+        link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+        inet 172.17.0.2/16 brd 172.17.255.255 scope global eth0
+        valid_lft forever preferred_lft forever
+    ```
+
+    查看网桥的情况 `brctl show`
+    ``` sh
+    [root@localhost ~]# brctl show
+    bridge name     bridge id               STP enabled     interfaces
+    docker0         8000.024219813981       no              veth1495d93
+                                                            vethe1976f1
+    ```
+
+- 指令
+    > `bridge`模式是 `docker` 的默认网络模式，不写 `--net` 参数，就是 `bridge模式`
+
+    > 在运行容器时，如果使用了 `-p -P` 参数，其本质是 `docker` 给 `iptables` 做了 `DNAT规则`
+
+    查看规则 `iptables -t nat -vnL`
+    ``` sh
+    [root@localhost ~]# iptables -t nat -vnL
+    ...
+    ...
+    Chain DOCKER (2 references)
+    pkts bytes target     prot opt in     out     source               destination
+        0     0 RETURN     all  --  docker0 *       0.0.0.0/0            0.0.0.0/0
+        9   436 DNAT       tcp  --  !docker0 *       0.0.0.0/0            0.0.0.0/0            tcp dpt:8888 to:172.17.0.2:8080
+        0     0 DNAT       tcp  --  !docker0 *       0.0.0.0/0            0.0.0.0/0            tcp dpt:32768 to:172.17.0.3:8080
+    ```
+
+- 示意图
+    ![桥接模式示意图](https://upload-images.jianshu.io/upload_images/13618762-f1643a51d313a889.png?imageMogr2/auto-orient/strip|imageView2/2/w/1083/format/webp)
+
+
+### 主机模式 `hostonly`
+
+- 与主机共用 `Network Namespace`
+
+    > 主机模式不会获得独立的 `Network Namespace`<br>
+    容器不会虚拟出自己的网卡配置自己的IP等， 直接使用主机的IP与端口<br>
+    文件系统、进程列表等还是容器自己独立的
+
+    > 优点： 网络性能较好<br>
+    > 缺点： 隔离性较差，端口占用
+
+    运行容器后在主机查看端口使用情况会发现，直接使用了主机的`8080` 端口的`java`进程
+    ``` sh
+    [root@localhost ~]# netstat -ntlp
+    Active Internet connections (only servers)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    tcp6       0      0 :::8080                 :::*                    LISTEN      18130/java
+    ```
+
+- 指令
+    ```
+    docker run -d --net=host tomcat 
+    ```
+
+### 容器模式 `container`
+
+- 与容器共用 `Network Namespace`
+  
+    > 类似于主机模式，但是不是共用主机的 IP 和端口，而是共用其他已经启动的容器的 IP 和端口
+    > 同样文件系统、进程列表等还是容器自己独立的
+
+- 指令
+    ``` sh
+    docker run -d -–net=container:d6a400b025cd tomcat
+    ```
+
+### 无网络模式 `none`
+
+- 无网络配置
+    
+    > 容器拥有自己的 `Network Namespace`，但是容器没有网卡、IP、路由等信息<br>
+    > 需要我们自己为 Docker容器添加网卡、配置IP等
+
+    > 因为无法联网，具有较好的安全性
+
+- 指令
+
+    ``` sh
+    docker run -d --net=none tomcat
+    ```
+
+## 常用指令
+
+### 帮助命令 `docker network --help`
+### 列出网络 `docker network ls`
+  - 语法
+    ``` sh
+    docker network ls
+    ```
+    安装docker的时候，docker引擎会自动创建一个 `bridge网络` 即 `docker0`
+    ``` sh
+    # 初始状态就有3个网络，bridge network 和 none
+    [root@localhost ~]# docker network ls
+    NETWORK ID          NAME                DRIVER              SCOPE
+    3e028579096d        bridge              bridge              local
+    8c779fd229cb        host                host                local
+    cb979e4cb7ed        none                null                local
+    ```
+### 查看网络详细信息 `docker network inspect 网络ID/网络名`
+### 移除网络 `docker network rm 网络ID/网络名`
+### 创建网络 `docker network create`
+
+  - 种类
+    > 网络有五种模式:<br>
+    > `bridge`<br>
+    > `host`<br>
+    > `none`<br>
+    > `overlay` 覆盖网络，利用VXLAN实现的bridge模式<br>
+    > `macvlan` 容器具备Mac地址，使其显示为网络上的物理设备
+
+    > `bridge` 式网络只能用于安装有docker引擎的单主机上<br>
+    > `overlay` 式网络可以连通多台有docker引擎的主机
+
+  - 语法
+    ``` sh
+    # 当命令中只提供一个网络名时会默认创建 bridge式网络
+    docker network create [options] 网络名
+    ```
+    ``` sh
+    [root@localhost ~]# docker network create mynet
+    1369bac434baa12b395c3363bb6bed28c76ab9d146c1c6ef7e65a2e7c258e978
+    [root@localhost ~]# docker network ls
+    NETWORK ID          NAME                DRIVER              SCOPE
+    1369bac434ba        mynet               bridge              local
+    ```
+  - 常用参数
+    > `-d 或 --driver` : 选择类型，默认bridge<br>
+    > `--subnet` : 子网/掩码，如果不使用该参数，docker守护进程会自动从网络中选择并分配一个子网，而这个子网可能覆盖硬件中不由docker管理的另一个子网<br>
+    > `--gateway` : 网关<br>
+    > `--ip-range` : 设置容器的IP取值范围，`ip-range` 是`subnet` 的一个子集，范围只能在 `subnet`之间，如果没设置就等同于 `subnet` 的范围<br>
+    > `--aux-address map` : 
+    ``` docker
+    docker network create \
+    --driver bridge \
+    --subnet 172.18.0.0/16 \
+    --gateway 172.18.0.1 \
+    --ip-range 172.18.1.0/24 mynet
+    ```
+
+    > 在bridge式网络中，你只能指定一个子网和网关，在overlay式网络中你可以指定多个子网和网关
+
+### 连接容器到一个网络 `docker network connect`
+
+  - 语法
+    ``` docker
+    docker network connect [OPTIONS] 网络ID/名 容器ID/名
+    ```
+
+## 自定义网络
+
+### 容器互联
+
+docker0的网络存在一个问题，即每次容器重启都会获得一个随机分配的IP，`如何在一些服务中准确获取到我们的每台主机？`
+
+- `--link`
+    > docker 提供了一种解决方案 参数`--link`<br>
+    > 但其存在缺点，再运行容器时需要配置指向，这个是单向的，如果想要在别的容器访问该容器，则也需要在那个容器运行时使用 `--link` 参数
+
+- 自定义网络的容器互联
+    > 自定义的网络会自动优化这个问题，我们使用自定义的网络创建的容器，可以直接访问对应容器的id（或容器名），前提是`属于同一网络`<br>
+    > 使用容器名互相访问时，需要自定义容器名，使用docker自动分配的不行
+
+    > 不同的集群使用不同的网络，各集群之间相互隔离，集群内部可以互通访问
+
+    ``` sh
+    [root@localhost ~]# docker ps -a
+    CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                     NAMES
+    a4b362502c8b        e8252f6d1dd2        "/bin/sh -c '/usr/lo…"   5 seconds ago       Up 3 seconds        0.0.0.0:32770->8080/tcp   tom2
+    d44728718223        e8252f6d1dd2        "/bin/sh -c '/usr/lo…"   17 seconds ago      Up 15 seconds       0.0.0.0:32769->8080/tcp   tom1
+
+    [root@localhost ~]# docker exec -it tom1 ping tom2
+    PING tom2 (172.18.0.5) 56(84) bytes of data.
+    64 bytes from tom2.mynet (172.18.0.5): icmp_seq=1 ttl=64 time=0.086 ms
+    64 bytes from tom2.mynet (172.18.0.5): icmp_seq=2 ttl=64 time=0.056 ms
+
+    [root@localhost ~]# docker exec -it tom2 ping tom1
+    PING tom1 (172.18.0.4) 56(84) bytes of data.
+    64 bytes from tom1.mynet (172.18.0.4): icmp_seq=1 ttl=64 time=0.060 ms
+    64 bytes from tom1.mynet (172.18.0.4): icmp_seq=2 ttl=64 time=0.055 ms
+    ```
+
+### 网络连通
+
+不同的网络处于不同的网段，有时我们也有需要不同网络之间互相访问的需求，如何实现？
+
+- connect<br>
+    > 本质是
+    将容器放到了对应网络中，并给它分配了一个对应网段的IP地址<br>
+
+    > 可以理解为，为容器再分配了一个网卡，因此这个容器就有了两个不同网段的 IP地址，其道理等同于云服务器的私网和公网IP
+    ``` sh
+    [root@localhost ~]# docker ps -a
+    CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                     NAMES
+    624fd037a1f9        e8252f6d1dd2        "/bin/sh -c '/usr/lo…"   14 minutes ago      Up 14 minutes       0.0.0.0:32774->8080/tcp   tom2-mynet
+    b4572d362c2f        e8252f6d1dd2        "/bin/sh -c '/usr/lo…"   14 minutes ago      Up 14 minutes       0.0.0.0:32773->8080/tcp   tom1-mynet
+    abc10e8e0cf3        e8252f6d1dd2        "/bin/sh -c '/usr/lo…"   14 minutes ago      Up 14 minutes       0.0.0.0:32772->8080/tcp   tom2-bridge
+    fefc154adb8b        e8252f6d1dd2        "/bin/sh -c '/usr/lo…"   15 minutes ago      Up 15 minutes       0.0.0.0:32771->8080/tcp   tom1-bridge
+    ```
+    ``` sh
+    [root@localhost ~]# docker network connect mynet tom1-bridge
+    ```
+    ``` json
+    [root@localhost ~]# docker network inspect bridge
+    "Containers": {
+        "624fd037a1f9f11f9ef6313a341095fa10c0176168c4a18202ab2ceb5639fee3": {
+            "Name": "tom2-mynet",
+            "EndpointID": "5ccb81acc1bef406b7f7ee1fd0822429dfd2af2d6fd48aa2cff1ea8f059b69ea",
+            "MacAddress": "02:42:ac:12:00:03",
+            "IPv4Address": "172.18.0.3/16",
+            "IPv6Address": ""
+        },
+        "b4572d362c2f980d8d81cdae226210bc456b1861001985be7ea955837c76ebb7": {
+            "Name": "tom1-mynet",
+            "EndpointID": "2b2b1d0f1c0a0a761e8ac7f70c86a03166496e8037bb0e603e21adde3fcd1546",
+            "MacAddress": "02:42:ac:12:00:02",
+            "IPv4Address": "172.18.0.2/16",
+            "IPv6Address": ""
+        },
+        "fefc154adb8ba9f4540ae5b2d5a81a71210217f973004e217fe934e5868e069f": {
+            "Name": "tom1-bridge",
+            "EndpointID": "b83cb28d8378901609fc97624fd16862b33fa94a5c2392f5c0938da6a509e016",
+            "MacAddress": "02:42:ac:12:00:04",
+            "IPv4Address": "172.18.0.4/16",
+            "IPv6Address": ""
+        }
+    },
+    ```
+    `veth-pair`的关系如下
+    ``` sh
+    [root@localhost ~]# brctl show
+    bridge name             bridge id               STP enabled     interfaces
+    br-5e697b719925         8000.0242777207b5       no              veth3c6608d
+                                                                    vethde355c0
+                                                                    vethe001304
+    docker0                 8000.0242b2d4496c       no              veth2c63b60
+                                                                    vetha2d0246
+    ```
+    此时网络互通
+    ``` sh
+    [root@localhost ~]# docker exec -it tom1-bridge ping tom2-mynet
+    PING tom2-mynet (172.18.0.3) 56(84) bytes of data.
+    64 bytes from tom2-mynet.mynet (172.18.0.3): icmp_seq=1 ttl=64 time=0.051 ms
+    64 bytes from tom2-mynet.mynet (172.18.0.3): icmp_seq=2 ttl=64 time=0.045 ms
+    ```
+
+## 实例
+
+### `redis` 集群
+
 
 # 一些错误解决
 
