@@ -46,7 +46,6 @@
     - [验证 `CMD` 和 `ENTRYPOINT` 的区别](#验证-cmd-和-entrypoint-的区别)
     - [验证 `ONBUILD` 的作用](#验证-onbuild-的作用)
     - [自定义 `tomcat9`](#自定义-tomcat9)
-- [DockerCompose](#dockercompose)
 - [Docker 网络](#docker-网络)
   - [Docker 网络模式](#docker-网络模式)
     - [桥接模式 `bridge`](#桥接模式-bridge)
@@ -65,6 +64,11 @@
     - [网络连通](#网络连通)
   - [实例](#实例-1)
     - [`redis` 集群](#redis-集群)
+- [DockerCompose](#dockercompose)
+  - [安装](#安装)
+  - [yaml](#yaml)
+  - [实例](#实例-2)
+    - [构建php开发环境](#构建php开发环境)
 - [一些错误解决](#一些错误解决)
   - [容器内部无法访问网关](#容器内部无法访问网关)
 
@@ -1118,9 +1122,6 @@
 
     验证 `tomcat`，直接网页访问
 
-
-# DockerCompose
-
 # Docker 网络
 
 ## Docker 网络模式
@@ -1428,6 +1429,92 @@ docker0的网络存在一个问题，即每次容器重启都会获得一个随�
 ## 实例
 
 ### `redis` 集群
+
+
+# DockerCompose
+
+利用DockerCompose可以定义和运行多个容器，即批量容器编排
+
+三步骤：
+1. `Dockerfile` 以保证移植性
+2. 编写 `docker-compose.yml` 配置文件
+3. 启动 `docker-compose up`
+
+两个点：
+1. 服务service，容器，应用
+2. 项目project，一组关联的容器
+
+## 安装
+
+DockerCompose是Docker官方的开源项目
+
+- ### 下载DockerCompose
+    ``` sh
+    # 官方地址(慢)
+    $ sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    # 其他地址
+    $ curl -L https://get.daocloud.io/docker/compose/releases/download/1.27.4/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    ```
+    [github发布地址](https://github.com/docker/compose/releases)
+    下载其他版本，替换版本号
+
+- ### 将可执行权限应用于二进制文件
+    ``` sh
+    chmod +x /usr/local/bin/docker-compose
+    ```
+
+- ### 创建软链接
+    ``` sh
+    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    ```
+
+- ### 测试安装成功
+    ``` sh
+    docker-compose --version
+    ```
+
+## yaml
+[文档](https://docs.docker.com/compose/compose-file/)
+
+- ### 三部分
+
+    1. 版本<br>
+        yaml 的版本依赖于 docker 的版本[依赖关系表](https://docs.docker.com/compose/compose-file/#compose-and-docker-compatibility-matrix)
+    2. 服务<br>
+        即要运行的各类服务，web、redis、mysql等
+    3. 其他配置
+        一些全局配置，网络/卷，全局规则等
+
+    ``` yaml
+    # 1.版本
+    version: '3.8'
+    # 2.服务
+    service:
+      webapp:
+        image: nginx:1.15
+        ports:
+          - "80:80"
+        volumns: 
+          - ./conf/nginx/conf.d:/etc/nginx/conf.d/:ro
+        networks:
+          - mynet
+      php:
+        ......
+      mysql:
+        ...... 
+      redis:
+        ......
+    # 3.其他配置 网络/卷，全局规则等
+    networks:
+    configs:
+    volumes:
+    ```
+
+## 实例
+
+### 构建php开发环境
+
+
 
 
 # 一些错误解决
